@@ -28,3 +28,4 @@ export const whiteColor = '#FFF';
 export const blackColor = '#000';
 export const primaryColor = '#023047';
 export const secondaryColor = '#FB8500';
+export const lightGreyColor = '#b5b5b5';

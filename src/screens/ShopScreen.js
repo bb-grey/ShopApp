@@ -1,11 +1,33 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet, FlatList} from 'react-native';
+import ProductCard from '../components/ProductCard';
+import {DEFAULT_PADDING} from '../constants/numbers';
+import {PRODUCT_DETAIL_SCREEN} from '../constants/strings';
+
+import PRODUCTS from '../data/dummy-data';
 
 const ShopScreen = ({navigation}) => {
   console.log('Shop Screen rendered');
+  const products = PRODUCTS;
+
+  const renderProductItem = item => {
+    return (
+      <ProductCard
+        product={item.item}
+        onSelectProduct={productId =>
+          navigation.navigate(PRODUCT_DETAIL_SCREEN, {productId})
+        }
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Shop Screen</Text>
+      <FlatList
+        data={products}
+        renderItem={renderProductItem}
+        style={styles.listContainer}
+      />
     </View>
   );
 };
@@ -13,8 +35,10 @@ const ShopScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: DEFAULT_PADDING,
+  },
+  listContainer: {
+    marginBottom: 12,
   },
 });
 

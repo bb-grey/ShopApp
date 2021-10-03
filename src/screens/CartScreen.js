@@ -1,12 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import CartItem from '../components/CartItem';
+import {DEFAULT_PADDING} from '../constants/numbers';
 
 const CartScreen = () => {
   console.log('Cart Screen rendered');
 
   return (
     <View style={styles.container}>
-      <Text>Cart Screen</Text>
+      <CartItem />
     </View>
   );
 };
@@ -14,8 +16,7 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: DEFAULT_PADDING,
   },
 });
 
