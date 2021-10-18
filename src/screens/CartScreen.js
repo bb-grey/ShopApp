@@ -1,14 +1,24 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, FlatList} from 'react-native';
 import CartItem from '../components/CartItem';
 import {DEFAULT_PADDING} from '../constants/numbers';
+import {useSelector, useDispatch} from 'react-redux';
+import PRODUCTS from '../data/dummy-data';
 
 const CartScreen = () => {
   console.log('Cart Screen rendered');
+  const cartItems = useSelector(state => state.cart.cartItems);
+  const renderCartItem = ({item}) => {
+    return <CartItem productId={item.productId} />;
+  };
 
   return (
     <View style={styles.container}>
-      <CartItem />
+      <FlatList
+        keyExtractor={item => item.productId}
+        data={cartItems}
+        renderItem={renderCartItem}
+      />
     </View>
   );
 };

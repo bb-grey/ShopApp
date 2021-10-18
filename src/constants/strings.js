@@ -29,3 +29,7 @@ export const blackColor = '#000';
 export const primaryColor = '#023047';
 export const secondaryColor = '#FB8500';
 export const lightGreyColor = '#b5b5b5';
+export const redColor = '#D11A2A';
+
+// App Messages
+export const SELECT_QUANTITY_MSG = 'Please, select a quantity greater than 0';

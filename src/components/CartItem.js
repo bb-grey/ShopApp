@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ShopCounterButton from './ShopCounterButton';
 import {
@@ -8,46 +9,71 @@ import {
   DEFAULT_BORDER_RADIUS,
 } from '../constants/numbers';
 import {lightGreyColor} from '../constants/strings';
+import PRODUCTS from '../data/dummy-data';
+import {
+  decrementQuantity,
+  incrementQuantity,
+  removeFromCart,
+} from '../store/features/cart/cartSlice';
 
-const CartItem = () => {
-  const [quantity, setQuantity] = useState(0);
+const CartItem = ({productId}) => {
+  console.log('Cart Item rendered');
+  const cartItems = useSelector(state => state.cart.cartItems);
+  const dispatch = useDispatch();
 
-  const incrementQuantity = () => {
-    setQuantity(q => q + 1);
+  const getProductName = () => {
+    return PRODUCTS.find(item => item.id === productId)?.title;
   };
 
-  const decrementQuantity = () => {
-    if (quantity > 0) {
-      setQuantity(q => q - 1);
+  const getQuantity = () => {
+    return cartItems.find(item => item.productId === productId).quantity;
+  };
+
+  const incrementProductQuantity = () => {
+    dispatch(incrementQuantity({productId: productId, quantity: 1}));
+  };
+
+  const decrementProductQuantity = () => {
+    if (getQuantity() > 1) {
+      dispatch(decrementQuantity({productId: productId, quantity: 1}));
     }
+  };
+
+  const removeProductFromCart = () => {
+    dispatch(removeFromCart({productId: productId}));
   };
   return (
     <View style={styles.cartItemContainer}>
       <View style={styles.cartItem}>
         <View style={styles.cartItemDetails}>
-          <Text style={styles.title}>Product Name</Text>
-          <Text style={styles.quantity}>Quantity</Text>
+          <Text style={styles.title}>{getProductName()}</Text>
+          <Text style={styles.quantity}>Quantity: {getQuantity()}</Text>
         </View>
         <View style={styles.counterContainer}>
           <ShopCounterButton
             icon={<Icon name="add" size={24} />}
-            onPress={incrementQuantity}
+            onPress={incrementProductQuantity}
           />
           <View style={styles.divider} />
-          <Text>{quantity}</Text>
+          <Text>{getQuantity()}</Text>
           <View style={styles.divider} />
           <ShopCounterButton
             icon={
               <Icon
                 name="remove-outline"
                 size={24}
-                onPress={decrementQuantity}
+                onPress={decrementProductQuantity}
               />
             }
           />
         </View>
         <View>
-          <Icon name="trash-outline" color="red" size={24} />
+          <Icon
+            name="trash-outline"
+            color="red"
+            size={24}
+            onPress={removeProductFromCart}
+          />
         </View>
       </View>
     </View>

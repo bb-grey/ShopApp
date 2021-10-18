@@ -1,6 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {View, StyleSheet, Text, Image, TouchableOpacity} from 'react-native';
 
+import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {
@@ -8,31 +10,87 @@ import {
   DEFAULT_PADDING,
   DEFAULT_BORDER_RADIUS,
 } from '../constants/numbers';
-import {lightGreyColor} from '../constants/strings';
+import {lightGreyColor, SELECT_QUANTITY_MSG} from '../constants/strings';
 import AddToCartButton from './AddToCartButton';
 import ShopCounterButton from './ShopCounterButton';
+import {
+  addToCart,
+  decrementQuantity,
+  incrementQuantity,
+  removeFromCart,
+} from '../store/features/cart/cartSlice';
+import DeleteButton from './DeleteButton';
+import Snackbar from 'react-native-snackbar';
 
 const ProductCard = ({product, onSelectProduct}) => {
+  console.log('product card rendered');
+  const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.cartItems);
   const [quantity, setQuantity] = useState(0);
 
-  const incrementQuantity = () => {
-    setQuantity(q => q + 1);
-  };
-
-  const decrementQuantity = () => {
-    if (quantity > 0) {
-      setQuantity(q => q - 1);
+  const incrementProductQuantity = () => {
+    if (inCart()) {
+      dispatch(incrementQuantity({productId: product?.id, quantity: 1}));
+    } else {
+      setQuantity(q => q + 1);
     }
   };
 
+  const decrementProductQuantity = () => {
+    if (inCart()) {
+      if (getProductQuantityFromCart() > 1) {
+        dispatch(decrementQuantity({productId: product?.id, quantity: 1}));
+      }
+    } else {
+      if (quantity > 0) {
+        setQuantity(q => q - 1);
+      }
+    }
+  };
+
+  const getProductQuantityFromCart = () => {
+    if (inCart()) {
+      return cartItems.find(item => item.productId === product.id).quantity;
+    }
+    return 0;
+  };
+
+  const inCart = () => {
+    console.log('in cart function');
+    return cartItems.findIndex(item => item.productId === product.id) > -1;
+  };
+
+  const addProductToCart = () => {
+    if (quantity > 0) {
+      dispatch(addToCart({productId: product.id, quantity: quantity}));
+    } else {
+      Snackbar.show({
+        text: SELECT_QUANTITY_MSG,
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
+  };
+
+  const removeProductFromCart = () => {
+    console.log('Remove pressed');
+    dispatch(removeFromCart({productId: product?.id}));
+    setQuantity(0);
+  };
+
   return (
-    <TouchableOpacity
-      activeOpacity={0.6}
-      style={styles.productCard}
-      onPress={() => onSelectProduct(product?.id)}>
-      <View style={styles.imageContainer}>
-        <Image source={{uri: product.imageUrl}} style={styles.image} />
-      </View>
+    <View style={styles.productCard}>
+      <TouchableOpacity
+        activeOpacity={0.6}
+        style={{flex: 1}}
+        onPress={() => {
+          setQuantity(0);
+          onSelectProduct(product?.id);
+        }}>
+        <View style={styles.imageContainer}>
+          <Image source={{uri: product.imageUrl}} style={styles.image} />
+        </View>
+      </TouchableOpacity>
+
       <View style={styles.detailsContainer}>
         <Text style={styles.title} numberOfLines={1}>
           {product?.title?.length < 16
@@ -43,27 +101,31 @@ const ProductCard = ({product, onSelectProduct}) => {
         <View style={styles.counterContainer}>
           <ShopCounterButton
             icon={<Icon name="add" size={24} />}
-            onPress={incrementQuantity}
+            onPress={incrementProductQuantity}
           />
           <View style={styles.divider} />
-          <Text>{quantity}</Text>
+          <Text>{inCart() ? getProductQuantityFromCart() : quantity}</Text>
           <View style={styles.divider} />
           <ShopCounterButton
             icon={
               <Icon
                 name="remove-outline"
                 size={24}
-                onPress={decrementQuantity}
+                onPress={decrementProductQuantity}
               />
             }
           />
         </View>
 
         <View>
-          <AddToCartButton />
+          {inCart() ? (
+            <DeleteButton onPress={removeProductFromCart} />
+          ) : (
+            <AddToCartButton onPress={addProductToCart} />
+          )}
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
