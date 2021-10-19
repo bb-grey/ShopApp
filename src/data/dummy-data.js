@@ -1,5 +1,3 @@
-import Product from '../models/product';
-
 const PRODUCTS = [
   {
     id: 'p1',
