@@ -9,16 +9,16 @@ import {
   DEFAULT_PADDING,
 } from '../constants/numbers';
 import {lightGreyColor, secondaryColor} from '../constants/strings';
-import PRODUCTS from '../data/dummy-data';
 import {addToCart, removeFromCart} from '../store/features/cart/cartSlice';
 
 const ProductDetailScreen = ({route, navigation}) => {
   console.log('Product Detail Screen rendered');
-  const dispatch = useDispatch();
+  const products = useSelector(state => state.products.products);
   const cartItems = useSelector(state => state.cart.cartItems);
+  const dispatch = useDispatch();
 
   const productId = route?.params?.productId;
-  const product = PRODUCTS.find(pr => pr?.id === productId);
+  const product = products.find(pr => pr?.id === productId);
 
   const inCart = () => {
     return cartItems.findIndex(item => item.productId === productId) > -1;

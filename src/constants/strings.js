@@ -33,3 +33,4 @@ export const redColor = '#D11A2A';
 
 // App Messages
 export const SELECT_QUANTITY_MSG = 'Please, select a quantity greater than 0';
+export const CART_SCREEN_MSG = 'No items in cart!';

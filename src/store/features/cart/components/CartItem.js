@@ -2,27 +2,27 @@ import React, {useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import ShopCounterButton from './ShopCounterButton';
+import ShopCounterButton from '../../../../components/ShopCounterButton';
 import {
   DEFAULT_PADDING,
   DEFAULT_MARGIN,
   DEFAULT_BORDER_RADIUS,
-} from '../constants/numbers';
-import {lightGreyColor} from '../constants/strings';
-import PRODUCTS from '../data/dummy-data';
+} from '../../../../constants/numbers';
+import {lightGreyColor} from '../../../../constants/strings';
 import {
   decrementQuantity,
   incrementQuantity,
   removeFromCart,
-} from '../store/features/cart/cartSlice';
+} from '../cartSlice';
 
 const CartItem = ({productId}) => {
   console.log('Cart Item rendered');
   const cartItems = useSelector(state => state.cart.cartItems);
+  const products = useSelector(state => state.products.products);
   const dispatch = useDispatch();
 
   const getProductName = () => {
-    return PRODUCTS.find(item => item.id === productId)?.title;
+    return products.find(item => item.id === productId)?.title;
   };
 
   const getQuantity = () => {
